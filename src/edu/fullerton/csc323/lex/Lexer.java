@@ -25,4 +25,25 @@ public class Lexer {
 			'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
 			'W', 'X', 'Y', 'Z'};
 	
+	/**
+	 * Print list to console
+	 * @param list	:	List to be printed
+	 */
+	private void print(List<String> list){
+		for(String s : list)
+			System.out.print(s + " ");
+		System.out.println();
+	}
+	
+	/**
+	 * Determine if char is letter or not
+	 * @param c	:	char to be checked
+	 * @return	:	true if char is letter, false otherwise
+	 */
+	private boolean isLetter(char c){
+		for(char h : chars)
+			if(c == h)
+				return true;
+		return false;
+	}
 }
