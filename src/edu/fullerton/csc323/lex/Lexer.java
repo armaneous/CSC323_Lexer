@@ -9,9 +9,10 @@ public class Lexer {
 	
 	// To store array of items per line
 	private String[] items;
-	
-	// Store tokens to be printed
+
+	// Store tokens and lexemes to be printed
 	private List<String> tokens = new ArrayList<String>();
+	private List<String> lexemes = new ArrayList<String>();
 	
 	// Reserved keywords
 	private String[] reserved = {"boolean", "else", "false", "fi", "function",
@@ -37,6 +38,7 @@ public class Lexer {
 	public void analyzeLex(String[] input){
 		for (String item : input){
 			tokens.add(tokenize(item));
+			lexemes.add(item);
 		}
 	}
 	
@@ -47,14 +49,18 @@ public class Lexer {
 	 * @return	:	String value of token from input String
 	 */
 	private String tokenize(String s) {
-		if (isReserved(s))
+		if (isReserved(s)) {
 			return "keyword";
-		else if (isIdentifier(s))
+		}
+		else if (isIdentifier(s)) {
 			return "identifier";
-		else if (isInteger(s))
+		}
+		else if (isInteger(s)) {
 			return "integer";
-		else if (isOp(s))
+		}
+		else if (isOp(s)) {
 			return "operator";
+		}
 		return "unknown";
 	}
 	
