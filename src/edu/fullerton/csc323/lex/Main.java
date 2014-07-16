@@ -26,11 +26,14 @@ public class Main {
 				lex.tokenize(input.split("\\s+"));
 			
 			lex.print();
+			lex.clear();
 			
 			System.out.println("Press \"enter\" to read another file. "
 					+ "Enter \"exit\" to quit.");
 			file = sc.nextLine().toLowerCase();
 		}
+		
+		sc.close();
 		
 	}
 

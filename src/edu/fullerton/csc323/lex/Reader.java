@@ -4,14 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.net.URL;
 
 public class Reader {
 	private BufferedReader br;
 	private String line;
 
 	public Reader(String file){
-		URL src = getClass().getResource(file);
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {

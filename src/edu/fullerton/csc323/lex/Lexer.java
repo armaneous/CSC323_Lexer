@@ -50,22 +50,31 @@ public class Lexer {
 	 * @return	:	String value of token from input String
 	 */
 	private String analyze(String s) {
+		// Check if current String is a reserved keyword
 		if (isReserved(s))
 			return "keyword";
+		// Check if current String is an identifier
 		else if (isIdentifier(s))
 			return "identifier";
+		// Check if current String is an integer
 		else if (isInteger(s))
 			return "integer";
+		// Check if current String is an operator
 		else if (isOp(s))
 			return "operator";
+		// Check if current String length == 1 and is a separator
 		else if (s.length() == 1 && isSeparator(s.charAt(0)))
 			return "separator";
+		// Check if current String starts with a separator
+		// (This assumes length > 1)
 		else if (startsWithSeparator(s)) {
 			items[0] = s.substring(0, 1);
 			items[1] = s.substring(1);
 			tokenize(items);
 			return "0";
 		}
+		// Check if current String ends with a separator
+		// (This assumes length > 1)
 		else if (endsWithSeparator(s)) {
 			items[0] = s.substring(0, s.length()-1);
 			items[1] = s.substring(s.length()-1);
@@ -92,16 +101,20 @@ public class Lexer {
 	public void print(){
 		cleanTokensLexemes();
 		
+		// Double-check if tokens and lexemes are same size
+		// to avoid any NullPointer exceptions
 		if(tokens.size() != lexemes.size()){
 			System.out.println("ERROR: Tokens and Lexemes have "
 					+ "different sizes");
 			return;
 		}
 		
-		System.out.println("Tokens \t\tLexemes");
+		// Begin printing tokens and lexemes
+		System.out.println("Tokens \t\t\tLexemes");
+		System.out.println("------------------------------------");
 		for (int i = 0; i < tokens.size(); i++)
 			System.out.println(tokens.get(i)
-					+ " \t\t" + lexemes.get(i));
+					+ " \t|\t" + lexemes.get(i));
 	}
 	
 	/**
@@ -116,6 +129,15 @@ public class Lexer {
 	}
 	
 	/**
+	 * Clears tokens and lexemes for reuse when running Lexer
+	 * again in the same program process.
+	 */
+	public void clear(){
+		tokens.clear();
+		lexemes.clear();
+	}
+	
+	/**
 	 * Determine if String is an identifier. Identifier must start
 	 * with a-z or A-Z and can contain _ and 0-9.
 	 * @param s	:	String to be checked
@@ -123,7 +145,7 @@ public class Lexer {
 	 */
 	private boolean isIdentifier(String s){
 		boolean startsWithLetter = isLetter(s.charAt(0));
-		boolean correctSyntax = s.matches("[a-z]+[A-Z]*.*_*[0-9].*");
+		boolean correctSyntax = s.matches("[a-z]+_*[0-9].*");
 		return startsWithLetter && correctSyntax;
 	}
 	
@@ -146,7 +168,7 @@ public class Lexer {
 	 */
 	private boolean isInteger(String s){
 		boolean startsWithNumber = isNum(s.charAt(0));
-		boolean correctSyntax = s.matches("[0-9].*");
+		boolean correctSyntax = s.matches("[0-9]+");
 		return startsWithNumber && correctSyntax;
 	}
 	
