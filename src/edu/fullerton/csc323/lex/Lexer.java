@@ -5,10 +5,8 @@ import java.util.List;
 
 public class Lexer {
 	
-	private String line;
-	
 	// To store array of items per line
-	private String[] items;
+	private String[] items = new String[2];
 
 	// Store tokens and lexemes to be printed
 	private List<String> tokens = new ArrayList<String>();
@@ -27,17 +25,20 @@ public class Lexer {
 
 	// Numbers
 	private char[] nums = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-	
+
 	// Operators
 	private String[] ops = {":=", "+", "-", "*", "/", "<", ">", "==", "!="};
+	
+	// Separators
+	private char[] separators = {';', '(', ')', '{', '}', '5', '6', '7', '8', '9'};
 	
 	/**
 	 * Run analysis on input array to tokenize items properly
 	 * @param input	:	String[] to be tokenized
 	 */
-	public void analyzeLex(String[] input){
+	public void tokenize(String[] input){
 		for (String item : input){
-			tokens.add(tokenize(item));
+			tokens.add(analyze(item));
 			lexemes.add(item);
 		}
 	}
@@ -48,18 +49,28 @@ public class Lexer {
 	 * @param s	:	String to be tokenized
 	 * @return	:	String value of token from input String
 	 */
-	private String tokenize(String s) {
-		if (isReserved(s)) {
+	private String analyze(String s) {
+		if (isReserved(s))
 			return "keyword";
-		}
-		else if (isIdentifier(s)) {
+		else if (isIdentifier(s))
 			return "identifier";
-		}
-		else if (isInteger(s)) {
+		else if (isInteger(s))
 			return "integer";
-		}
-		else if (isOp(s)) {
+		else if (isOp(s))
 			return "operator";
+		else if (s.length() == 1 && isSeparator(s.charAt(0)))
+			return "separator";
+		else if (startsWithSeparator(s)) {
+			items[0] = s.substring(0, 1);
+			items[1] = s.substring(1);
+			tokenize(items);
+			return "0";
+		}
+		else if (endsWithSeparator(s)) {
+			items[0] = s.substring(0, s.length()-1);
+			items[1] = s.substring(s.length()-1);
+			tokenize(items);
+			return "0";
 		}
 		return "unknown";
 	}
@@ -76,13 +87,32 @@ public class Lexer {
 	}
 	
 	/**
-	 * Print a List of Strings to console.
-	 * @param list	:	List to be printed
+	 * Prints the tokens and lexemes Lists
 	 */
-	private void print(List<String> list){
-		for(String s : list)
-			System.out.print(s + " ");
-		System.out.println();
+	public void print(){
+		cleanTokensLexemes();
+		
+		if(tokens.size() != lexemes.size()){
+			System.out.println("ERROR: Tokens and Lexemes have "
+					+ "different sizes");
+			return;
+		}
+		
+		System.out.println("Tokens \t\tLexemes");
+		for (int i = 0; i < tokens.size(); i++)
+			System.out.println(tokens.get(i)
+					+ " \t\t" + lexemes.get(i));
+	}
+	
+	/**
+	 * Private helper method for removing empty tokens that were
+	 * added when compound tokens were analyzed.
+	 */
+	private void cleanTokensLexemes(){
+		while (tokens.contains("0")) {
+			lexemes.remove(tokens.indexOf("0"));
+			tokens.remove(tokens.indexOf("0"));
+		}
 	}
 	
 	/**
@@ -93,7 +123,7 @@ public class Lexer {
 	 */
 	private boolean isIdentifier(String s){
 		boolean startsWithLetter = isLetter(s.charAt(0));
-		boolean correctSyntax = s.matches("[a-Z].*_*[0-9]*|[a-Z].*[0-9]*_*");
+		boolean correctSyntax = s.matches("[a-z]+[A-Z]*.*_*[0-9].*");
 		return startsWithLetter && correctSyntax;
 	}
 	
@@ -142,5 +172,37 @@ public class Lexer {
 			if(s.equals(o))
 				return true;
 		return false;
+	}
+	
+	/**
+	 * Private helper method to determine if char is separator or not.
+	 * @param c	:	char to be checked
+	 * @return	:	true if char is separator, false otherwise
+	 */
+	private boolean isSeparator(char c){
+		for(char h : separators)
+			if(c == h)
+				return true;
+		return false;
+	}
+	
+	/**
+	 * Check to see if String is concatenated with a separator and
+	 * the separator is at the beginning of the String.
+	 * @param s	:	String to be checked
+	 * @return	:	true if String starts with a separator
+	 */
+	private boolean startsWithSeparator(String s){
+		return isSeparator(s.charAt(0));
+	}
+	
+	/**
+	 * Check to see if String is concatenated with a separator and
+	 * the separator is at the end of the String.
+	 * @param s	:	String to be checked
+	 * @return	:	true if String ends with a separator
+	 */
+	private boolean endsWithSeparator(String s){
+		return isSeparator(s.charAt(s.length()-1));
 	}
 }

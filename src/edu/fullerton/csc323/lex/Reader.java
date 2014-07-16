@@ -1,20 +1,21 @@
 package edu.fullerton.csc323.lex;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 
 public class Reader {
 	private BufferedReader br;
 	private String line;
 
-	public Reader(File file){
+	public Reader(String file){
+		URL src = getClass().getResource(file);
 		try {
 			br = new BufferedReader(new FileReader(file));
 		} catch (FileNotFoundException e) {
-			System.out.println("ERROR: File does not exist.");
+			System.out.println("ERROR: File does not exist. ");
 		}
 	}
 	
