@@ -7,6 +7,9 @@ public class Lexer {
 	
 	// To store array of items per line
 	private String[] items = new String[2];
+	
+	// Store temporary String
+	private String temp;
 
 	// Store tokens and lexemes to be printed
 	private List<String> tokens = new ArrayList<String>();
@@ -30,7 +33,7 @@ public class Lexer {
 	private String[] ops = {":=", "+", "-", "*", "/", "<", ">", "==", "!="};
 	
 	// Separators
-	private char[] separators = {';', '(', ')', '{', '}', '5', '6', '7', '8', '9'};
+	private String[] separators = {";", "(", ")", "{", "}", ",", ":", "$$"};
 	
 	/**
 	 * Run analysis on input array to tokenize items properly
@@ -63,22 +66,18 @@ public class Lexer {
 		else if (isOp(s))
 			return "operator";
 		// Check if current String length == 1 and is a separator
-		else if (s.length() == 1 && isSeparator(s.charAt(0)))
+		else if (s.length() == 1 && isSeparator(s))
 			return "separator";
-		// Check if current String starts with a separator
+		// Check if current String contains an operator
 		// (This assumes length > 1)
-		else if (startsWithSeparator(s)) {
-			items[0] = s.substring(0, 1);
-			items[1] = s.substring(1);
-			tokenize(items);
+		else if (containsOperator(s)) {
+			splitFromTokens(s, ops);
 			return "0";
 		}
-		// Check if current String ends with a separator
+		// Check if current String contains a separator
 		// (This assumes length > 1)
-		else if (endsWithSeparator(s)) {
-			items[0] = s.substring(0, s.length()-1);
-			items[1] = s.substring(s.length()-1);
-			tokenize(items);
+		else if (containsSeparator(s)) {
+			splitFromTokens(s, separators);
 			return "0";
 		}
 		return "unknown";
@@ -110,11 +109,12 @@ public class Lexer {
 		}
 		
 		// Begin printing tokens and lexemes
-		System.out.println("Tokens \t\t\tLexemes");
+		System.out.println("Tokens \t\t|\tLexemes");
 		System.out.println("------------------------------------");
 		for (int i = 0; i < tokens.size(); i++)
 			System.out.println(tokens.get(i)
 					+ " \t|\t" + lexemes.get(i));
+		System.out.println();
 	}
 	
 	/**
@@ -144,9 +144,9 @@ public class Lexer {
 	 * @return	:	true if String is identifier, false otherwise
 	 */
 	private boolean isIdentifier(String s){
-		boolean startsWithLetter = isLetter(s.charAt(0));
-		boolean correctSyntax = s.matches("[a-z]+_*[0-9].*");
-		return startsWithLetter && correctSyntax;
+		if (s.length() >= 1)
+			return isLetter(s.charAt(0)) && s.matches("[a-z]+[A-Z]*_*[0-9]*");
+		return false;
 	}
 	
 	/**
@@ -167,9 +167,9 @@ public class Lexer {
 	 * @return	:	true if String is identifier, false otherwise
 	 */
 	private boolean isInteger(String s){
-		boolean startsWithNumber = isNum(s.charAt(0));
-		boolean correctSyntax = s.matches("[0-9]+");
-		return startsWithNumber && correctSyntax;
+		if (s.length() >= 1)
+			return isNum(s.charAt(0)) && s.matches("[0-9]+");
+		return false;
 	}
 	
 	/**
@@ -201,30 +201,63 @@ public class Lexer {
 	 * @param c	:	char to be checked
 	 * @return	:	true if char is separator, false otherwise
 	 */
-	private boolean isSeparator(char c){
-		for(char h : separators)
-			if(c == h)
+	private boolean isSeparator(String s){
+		for(String p : separators)
+			if(s.equals(p))
 				return true;
 		return false;
 	}
 	
 	/**
-	 * Check to see if String is concatenated with a separator and
-	 * the separator is at the beginning of the String.
+	 * Scan whole String for separators concatenated with other
+	 * tokens both before and after separator.
 	 * @param s	:	String to be checked
-	 * @return	:	true if String starts with a separator
+	 * @return	:	true if String contains a separator
 	 */
-	private boolean startsWithSeparator(String s){
-		return isSeparator(s.charAt(0));
+	private boolean containsSeparator(String s){
+		for (String p : separators)
+			if (s.contains(p))
+				return true;
+		return false;
 	}
 	
 	/**
-	 * Check to see if String is concatenated with a separator and
-	 * the separator is at the end of the String.
-	 * @param s	:	String to be checked
-	 * @return	:	true if String ends with a separator
+	 * Deal with splitting String from symbols for tokenizing. Symbols
+	 * can be operators or separators.
+	 * @param s			:	String to be split	
+	 * @param symbols	:	String[] to be check against for splitting
 	 */
-	private boolean endsWithSeparator(String s){
-		return isSeparator(s.charAt(s.length()-1));
+	private void splitFromTokens(String s, String[] symbols){
+		int index;
+		temp = s;
+		for (String p : symbols){
+			index = s.indexOf(p);
+			if (index == s.lastIndexOf(p) && index != -1){
+				items[0] = (index == 0)
+						? s.substring(0, index+1) : s.substring(0, index);
+				items[1] = (index == 0)
+						? s.substring(index+1) : s.substring(index);
+				tokenize(items);
+				System.out.println("Split: " + items[0] + items[1] + " Temp:" + temp);
+				temp = (index == 0)
+						? s.substring(index+1) : s.substring(index);
+			}
+			else {
+				// TODO Repeating separators/operators in single String
+			}
+		}
+	}
+	
+	/**
+	 * Scan whole String for operators concatenated with other
+	 * tokens both before and after operator.
+	 * @param s	:	String to be checked
+	 * @return	:	true if String contains a operator
+	 */
+	private boolean containsOperator(String s){
+		for (String p : ops)
+			if (s.contains(p))
+				return true;
+		return false;
 	}
 }
