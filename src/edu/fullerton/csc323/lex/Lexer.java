@@ -65,8 +65,8 @@ public class Lexer {
 		// Check if current String is an operator
 		else if (isOp(s))
 			return "operator";
-		// Check if current String length == 1 and is a separator
-		else if (s.length() == 1 && isSeparator(s))
+		// Check if current String is a separator
+		else if (isSeparator(s))
 			return "separator";
 		// Check if current String contains an operator
 		// (This assumes length > 1)
@@ -229,18 +229,18 @@ public class Lexer {
 	 */
 	private void splitFromTokens(String s, String[] symbols){
 		int index;
-		temp = s;
+		// For every symbol
 		for (String p : symbols){
 			index = s.indexOf(p);
-			if (index == s.lastIndexOf(p) && index != -1){
+			// If the symbol is found in the String
+			if (index != -1){
 				items[0] = (index == 0)
 						? s.substring(0, index+1) : s.substring(0, index);
 				items[1] = (index == 0)
 						? s.substring(index+1) : s.substring(index);
+				System.out.println("Split: " + items[0]+ " " + items[1] + " Temp:" + s);
+				System.out.println("Length: " + s.length() + " Index:" + index);
 				tokenize(items);
-				System.out.println("Split: " + items[0] + items[1] + " Temp:" + temp);
-				temp = (index == 0)
-						? s.substring(index+1) : s.substring(index);
 			}
 			else {
 				// TODO Repeating separators/operators in single String
