@@ -23,7 +23,7 @@ public class Main {
 					+ "/src/input/" + file);
 			
 			while ((input = read.nextLine()) != null)
-				lex.tokenize(input.split("\\s+"));
+				lex.tokenize(input.split("\\s+|^\\s+"));
 			
 			lex.print();
 			lex.clear();

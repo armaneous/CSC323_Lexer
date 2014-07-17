@@ -4,12 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Lexer {
-	
-	// To store array of items per line
-	private String[] items = new String[2];
-	
-	// Store temporary String
-	private String temp;
 
 	// Store tokens and lexemes to be printed
 	private List<String> tokens = new ArrayList<String>();
@@ -229,17 +223,20 @@ public class Lexer {
 	 */
 	private void splitFromTokens(String s, String[] symbols){
 		int index;
+		String[] items = new String[2];
 		// For every symbol
 		for (String p : symbols){
 			index = s.indexOf(p);
 			// If the symbol is found in the String
 			if (index != -1){
-				items[0] = (index == 0)
-						? s.substring(0, index+1) : s.substring(0, index);
-				items[1] = (index == 0)
-						? s.substring(index+1) : s.substring(index);
-				System.out.println("Split: " + items[0]+ " " + items[1] + " Temp:" + s);
-				System.out.println("Length: " + s.length() + " Index:" + index);
+				if (index == 0){
+					items[0] = s.substring(0, index+1);
+					items[1] = s.substring(index+1);
+				}
+				else {
+					items[0] = s.substring(0, index);
+					items[1] = s.substring(index);
+				}
 				tokenize(items);
 			}
 			else {
