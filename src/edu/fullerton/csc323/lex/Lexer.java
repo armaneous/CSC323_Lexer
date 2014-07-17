@@ -74,6 +74,7 @@ public class Lexer {
 			splitFromTokens(s, separators);
 			return "0";
 		}
+		// Return "unknown" for all other lexemes
 		return "unknown";
 	}
 	
@@ -229,6 +230,7 @@ public class Lexer {
 			index = s.indexOf(p);
 			// If the symbol is found in the String
 			if (index != -1){
+				// Check whether symbol is at beginning or end
 				if (index == 0){
 					items[0] = s.substring(0, index+1);
 					items[1] = s.substring(index+1);
@@ -238,9 +240,6 @@ public class Lexer {
 					items[1] = s.substring(index);
 				}
 				tokenize(items);
-			}
-			else {
-				// TODO Repeating separators/operators in single String
 			}
 		}
 	}
