@@ -1,14 +1,14 @@
 $$
-function convert (fahr:int)
+function convert (fahr : int)
 {
-           return 5*(fahr -32)/9;
+           return 5*(fahr - 32)/9;
 }
 $$
      int    low, high, step;
-     read(low, high, step);
+     read ( low, high, step ) ;
      while (low < high)
-            {      write (low);
-                    write (convert (low));
+            {      write ( low ) ;
+                    write (convert ( low ) ) ;
                     low := low + step;
             } 
 $$

@@ -27,7 +27,9 @@ public class Lexer {
 	private String[] ops = {":=", "+", "-", "*", "/", "<", ">", "==", "!="};
 	
 	// Separators
-	private String[] separators = {";", "(", ")", "{", "}", ",", ":", "$$"};
+	private String[] separators = {"{", "(", ",", ":", ")", "}", "$$", ";"};
+	
+	private Rules r = new Rules();
 	
 	/**
 	 * Run analysis on input array to tokenize items properly
@@ -92,7 +94,7 @@ public class Lexer {
 	/**
 	 * Prints the tokens and lexemes Lists
 	 */
-	public void print(){
+	public void printTokens(){
 		cleanTokensLexemes();
 		
 		// Double-check if tokens and lexemes are same size
@@ -110,6 +112,12 @@ public class Lexer {
 			System.out.println(tokens.get(i)
 					+ " \t|\t" + lexemes.get(i));
 		System.out.println();
+	}
+	
+	public void printGrammar() {
+		cleanTokensLexemes();
+		r.setInput(tokens, lexemes);
+		r.printRules();
 	}
 	
 	/**
@@ -140,7 +148,7 @@ public class Lexer {
 	 */
 	private boolean isIdentifier(String s){
 		if (s.length() >= 1)
-			return isLetter(s.charAt(0)) && s.matches("[a-z]+[A-Z]*_*[0-9]*");
+			return isLetter(s.charAt(0)) && s.matches("[a-z]+_*[A-Z]*_*[0-9]*_*");
 		return false;
 	}
 	

@@ -10,23 +10,32 @@ public class Main {
 		String file = "";
 		String input;
 		Scanner sc = new Scanner(System.in);
+		String commands[];
 		
 		System.out.println("Working Directory = " +
 	              System.getProperty("user.dir"));
 		
 		while (!file.equals("exit")) {
-			System.out.println("Enter file name to be read +"
+			System.out.println("To print tokens: [file name] tokens"
+					+ "\nTo print grammar: [file name] grammar"
 					+ "\n(file must be in /src/input/):");
 			
-			file = sc.nextLine();
-			read = new Reader(System.getProperty("user.dir")
-					+ "/src/input/" + file);
+			commands = sc.nextLine().split("\\s+");
+			if (commands.length == 2) {
+				read = new Reader(System.getProperty("user.dir")
+						+ "/src/input/" + commands[0]);
 			
-			while ((input = read.nextLine()) != null)
-				lex.tokenize(input.split("\\s+|^\\s+"));
-			
-			lex.print();
-			lex.clear();
+				while ((input = read.nextLine()) != null)
+					lex.tokenize(input.split("\\s+|^\\s+"));
+
+				if (commands[1].equals("tokens"))
+					lex.printTokens();
+				else if (commands[1].equals("grammar"))
+					lex.printGrammar();
+				else
+					System.out.println("ERROR: Print choice not recognized");
+				lex.clear();
+			}
 			
 			System.out.println("Press \"enter\" to read another file. "
 					+ "Enter \"exit\" to quit.");
