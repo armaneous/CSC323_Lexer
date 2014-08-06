@@ -1,4 +1,4 @@
-package edu.fullerton.csc323.lex;
+package edu.fullerton.csc323.lex.grammar;
 
 import java.util.HashMap;
 import java.util.LinkedList;

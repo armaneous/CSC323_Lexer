@@ -2,48 +2,48 @@ package edu.fullerton.csc323.lex;
 
 import java.util.Scanner;
 
+import edu.fullerton.csc323.lex.driver.Lexer;
+import edu.fullerton.csc323.lex.io.Reader;
+
 public class Main {
 
 	public static void main(String[] args) {
 		Reader read;
-		Lexer lex = new Lexer();
 		String file = "";
 		String input;
 		Scanner sc = new Scanner(System.in);
-		String commands[];
 		
-		System.out.println("Working Directory = " +
-	              System.getProperty("user.dir"));
+		print("Working Directory = " + System.getProperty("user.dir"));
 		
 		while (!file.equals("exit")) {
-			System.out.println("To print tokens: [file name] tokens"
-					+ "\nTo print grammar: [file name] grammar"
+			Lexer lex = new Lexer();
+			
+			print("To print tokens, enter file name"
 					+ "\n(file must be in /src/input/):");
 			
-			commands = sc.nextLine().split("\\s+");
-			if (commands.length == 2) {
-				read = new Reader(System.getProperty("user.dir")
-						+ "/src/input/" + commands[0]);
+			file = System.getProperty("user.dir")
+					+ "/src/input/" + sc.nextLine();
 			
-				while ((input = read.nextLine()) != null)
-					lex.tokenize(input.split("\\s+|^\\s+"));
-
-				if (commands[1].equals("tokens"))
-					lex.printTokens();
-				else if (commands[1].equals("grammar"))
-					lex.printGrammar();
-				else
-					System.out.println("ERROR: Print choice not recognized");
-				lex.clear();
-			}
+			read = new Reader(file);
 			
-			System.out.println("Press \"enter\" to read another file. "
+			while ((input = read.nextLine()) != null)
+				lex.tokenize(input.split("\\s+|^\\s+"));
+			
+			lex.cleanEmptyLexemes();
+			
+			System.out.println(lex);
+			
+			print("Press \"enter\" to read another file. "
 					+ "Enter \"exit\" to quit.");
 			file = sc.nextLine().toLowerCase();
 		}
 		
 		sc.close();
 		
+	}
+	
+	private static void print(String s) {
+		System.out.println(s);
 	}
 
 }
